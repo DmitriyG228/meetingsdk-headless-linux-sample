@@ -9,9 +9,6 @@
 #include <vector>
 #include <future>
 
-
-#include <X11/Xlib.h>
-
 #include <opencv2/objdetect.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -38,6 +35,7 @@ class ZoomSDKRendererDelegate : public IZoomSDKRendererDelegate {
 
     vector<Rect> m_faces;
     CascadeClassifier m_cascade;
+    cv::VideoWriter m_videoWriter;
 
     SocketServer m_socketServer;
 
@@ -48,6 +46,10 @@ public:
 
     void setDir(const string& dir);
     void setFilename(const string& filename);
+
+    void initializeVideoWriter(int frameWidth, int frameHeight, double fps);
+
+    void initializeRawVideoWriter(int frameWidth, int frameHeight);
 
     void onRawDataFrameReceived(YUVRawDataI420* data) override;
     void onRawDataStatusChanged(RawDataStatus status) override {};
