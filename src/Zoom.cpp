@@ -28,10 +28,9 @@ SDKError Zoom::init() {
         Log::error("InitSDK failed");
         return err;
     }
-    
+
     return createServices();
 }
-
 
 SDKError Zoom::createServices() {
     auto err = CreateMeetingService(&m_meetingService);
@@ -202,16 +201,18 @@ SDKError Zoom::clean() {
 }
 
 SDKError Zoom::startRawRecording() {
-    auto recCtl = m_meetingService->GetMeetingRecordingController();
-
-    SDKError err = recCtl->CanStartRawRecording();
-
-    if (hasError(err)) {
-        Log::info("requesting local recording privilege");
-        return recCtl->RequestLocalRecordingPrivilege();
+    if (m_meetingService->GetMeetingStatus() != ZOOM_SDK_NAMESPACE::MEETING_STATUS_INMEETING) {
+        Log::error("You must be in a meeting to start raw recording");
+        return SDKERR_WRONG_USAGE;
     }
 
-    err = recCtl->StartRawRecording();
+    auto recCtl = m_meetingService->GetMeetingRecordingController();
+    if (!recCtl) {
+        Log::error("Failed to get meeting recording controller");
+        return SDKERR_INTERNAL_ERROR;
+    }
+
+    auto err = recCtl->StartRawRecording();
     if (hasError(err, "start raw recording"))
         return err;
 
@@ -235,6 +236,8 @@ SDKError Zoom::startRawRecording() {
         err = m_videoHelper->subscribe(uid, RAW_DATA_TYPE_VIDEO);
         if (hasError(err, "subscribe to raw video"))
             return err;
+
+        Log::info("writing video raw data to " + m_renderDelegate->dir() + "/" + m_renderDelegate->filename());
 
   /*      auto* videoSourceHelper = GetRawdataVideoSourceHelper();
         if (!videoSourceHelper) {
@@ -261,6 +264,14 @@ SDKError Zoom::startRawRecording() {
     }
 
     if (m_config.useRawAudio()) {
+        auto* audioController = m_meetingService->GetMeetingAudioController();
+        if (audioController) {
+            auto voipErr = audioController->JoinVoip();
+            if (hasError(voipErr, "join VoIP")) {
+                Log::error("Failed to join VoIP audio");
+            }
+        }
+
         m_audioHelper = GetAudioRawdataHelper();
         if (!m_audioHelper)
             return SDKERR_UNINITIALIZE;
@@ -277,6 +288,8 @@ SDKError Zoom::startRawRecording() {
         err = m_audioHelper->subscribe(m_audioSource);
         if (hasError(err, "subscribe to raw audio"))
             return err;
+
+        Log::info("writing audio raw data to " + m_audioSource->dir() + "/" + m_audioSource->filename());
     }
 
     return SDKERR_SUCCESS;

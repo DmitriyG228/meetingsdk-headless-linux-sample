@@ -1,9 +1,7 @@
 #include "ZoomSDKAudioRawDataDelegate.h"
 
 
-ZoomSDKAudioRawDataDelegate::ZoomSDKAudioRawDataDelegate(bool useMixedAudio = true, bool transcribe = false) : m_useMixedAudio(useMixedAudio), m_transcribe(transcribe){
-    server.start();
-}
+ZoomSDKAudioRawDataDelegate::ZoomSDKAudioRawDataDelegate(bool useMixedAudio = true, bool transcribe = false) : m_useMixedAudio(useMixedAudio), m_transcribe(transcribe){}
 
 void ZoomSDKAudioRawDataDelegate::onMixedAudioRawDataReceived(AudioRawData *data) {
     if (!m_useMixedAudio) return;
@@ -62,14 +60,22 @@ void ZoomSDKAudioRawDataDelegate::writeToFile(const string &path, AudioRawData *
     stringstream ss;
     ss << "Writing " << data->GetBufferLen() << "b to " << path << " at " << data->GetSampleRate() << "Hz";
 
-    Log::info(ss.str());
+    //Log::info(ss.str());
 }
 
+string ZoomSDKAudioRawDataDelegate::dir() const 
+{
+    return m_dir;
+}
 void ZoomSDKAudioRawDataDelegate::setDir(const string &dir)
 {
     m_dir = dir;
 }
 
+string ZoomSDKAudioRawDataDelegate::filename() const 
+{
+    return m_filename;
+}
 void ZoomSDKAudioRawDataDelegate::setFilename(const string &filename)
 {
     m_filename = filename;

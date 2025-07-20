@@ -6,24 +6,25 @@ ZoomSDKRendererDelegate::ZoomSDKRendererDelegate() {
         Log::error("failed to load cascade file");
 
     m_faces.reserve(2);
+}
 
+ZoomSDKRendererDelegate::~ZoomSDKRendererDelegate() {
+    if (m_videoWriter.isOpened()) {
+        m_videoWriter.release();
+    }
 }
 
 
 void ZoomSDKRendererDelegate::initializeVideoWriter(int frameWidth, int frameHeight, double fps) {
-    int fourcc = VideoWriter::fourcc('h','2','6','4');
+    int fourcc = VideoWriter::fourcc('a','v','c','1');
     std::string filename = "out/" + m_filename;
-    if (filename.find(".mp4") == std::string::npos) {
-        filename += ".mp4";
-    }
-    
     m_videoWriter.open(filename, fourcc, fps, Size(frameWidth, frameHeight), true);
 }
 
 void ZoomSDKRendererDelegate::onRawDataFrameReceived(YUVRawDataI420 *data)
 {
     if (!m_videoWriter.isOpened()) {
-        initializeVideoWriter(data->GetStreamWidth(), data->GetStreamHeight(), 15);
+        initializeVideoWriter(data->GetStreamWidth(), data->GetStreamHeight(), 30);
     }
 
     auto res = async(launch::async, [&]{
@@ -36,21 +37,18 @@ void ZoomSDKRendererDelegate::onRawDataFrameReceived(YUVRawDataI420 *data)
 
         m_cascade.detectMultiScale(small, m_faces, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30));
 
-        if (m_frameCount++ % 2 == 0) {
-            Scalar color = Scalar(0, 0, 255);
-            for (size_t i = 0; i < m_faces.size(); i++) {
-                Rect r = m_faces[i];
-                rectangle(gray, Point(cvRound(r.x*m_scale), cvRound(r.y*m_scale)),
-                         Point(cvRound((r.x + r.width-1)*m_scale),
-                               cvRound((r.y + r.height-1)*m_scale)), color, 3, 8, 0);
-            }
+        Scalar color = Scalar(0, 0, 255);
+        for (size_t i = 0; i < m_faces.size(); i++) {
+            Rect r = m_faces[i];
+            rectangle(gray, Point(cvRound(r.x*m_scale), cvRound(r.y*m_scale)),
+                        Point(cvRound((r.x + r.width-1)*m_scale),
+                            cvRound((r.y + r.height-1)*m_scale)), color, 3, 8, 0);
+        }
 
-            // METHOD 1: Write to compressed video (recommended)
-            if (m_videoWriter.isOpened()) {
-                Mat colorFrame;
-                cvtColor(gray, colorFrame, COLOR_GRAY2BGR);
-                m_videoWriter.write(colorFrame);
-            }
+        if (m_videoWriter.isOpened()) {
+            Mat colorFrame;
+            cvtColor(gray, colorFrame, COLOR_GRAY2BGR);
+            m_videoWriter.write(colorFrame);
         }
     });
 }
@@ -70,9 +68,17 @@ void ZoomSDKRendererDelegate::writeToFile(const string &path, YUVRawDataI420 *da
 	file.flush();
 }
 
+string ZoomSDKRendererDelegate::dir() const {
+    return m_dir;
+}
 void ZoomSDKRendererDelegate::setDir(const string &dir)
 {
     m_dir = dir;
+}
+
+string ZoomSDKRendererDelegate::filename() const
+{
+    return m_filename;
 }
 
 void ZoomSDKRendererDelegate::setFilename(const string &filename)

@@ -41,15 +41,16 @@ class ZoomSDKRendererDelegate : public IZoomSDKRendererDelegate {
 
 public:
     ZoomSDKRendererDelegate();
+    ~ZoomSDKRendererDelegate();
 
     void writeToFile(const string& path, YUVRawDataI420* data);
 
+    string dir() const;
     void setDir(const string& dir);
+    string filename() const;
     void setFilename(const string& filename);
 
     void initializeVideoWriter(int frameWidth, int frameHeight, double fps);
-
-    void initializeRawVideoWriter(int frameWidth, int frameHeight);
 
     void onRawDataFrameReceived(YUVRawDataI420* data) override;
     void onRawDataStatusChanged(RawDataStatus status) override {};

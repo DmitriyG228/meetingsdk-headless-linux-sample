@@ -81,20 +81,28 @@ class Zoom : public Singleton<Zoom> {
         auto* reminderController = m_meetingService->GetMeetingReminderController();
         reminderController->SetEvent(new MeetingReminderEvent());
 
-        if (m_config.useRawRecording()) {
-            auto recordingCtrl = m_meetingService->GetMeetingRecordingController();
+        if (!m_config.useRawRecording())  
+            return;
 
-            function<void(bool)> onRecordingPrivilegeChanged = [&](bool canRec) {
-                if (canRec)
-                    startRawRecording();
-                else
-                    stopRawRecording();
-            };
 
-            auto recordingEvent = new MeetingRecordingCtrlEvent(onRecordingPrivilegeChanged);
-            recordingCtrl->SetEvent(recordingEvent);
+        function<void(bool)> onRecordingPrivilegeChanged = [&](bool canRec) {
+            if (!canRec) {
+                Log::error("Failed to get recording privilege");
+                return;
+            }
 
             startRawRecording();
+        };
+
+        auto recCtl = m_meetingService->GetMeetingRecordingController();
+        auto recordingEvent = new MeetingRecordingCtrlEvent(onRecordingPrivilegeChanged);
+        recCtl->SetEvent(recordingEvent);
+
+        SDKError err = recCtl->CanStartRawRecording();
+
+        if (hasError(err)) {
+            Log::info("requesting local recording privilege");
+            recCtl->RequestLocalRecordingPrivilege();
         }
     };
 

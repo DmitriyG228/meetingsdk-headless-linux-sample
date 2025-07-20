@@ -10,5 +10,8 @@ client-secret=""
 # Use a join-url or a meeting-id and password
 join-url=""
 
+[RawVideo]
+file="meeting-video.mp4"
+
 [RawAudio]
 file="meeting-audio.pcm"
