@@ -35,7 +35,7 @@ gboolean onTimeout (gpointer data) {
 }
 
 /**
- * Run the Zoom Meeting Bot
+ * Run the Zoom Meeting App
  * @param argc argument count
  * @param argv argument vector
  * @return SDKError
@@ -68,7 +68,7 @@ SDKError run(int argc, char** argv) {
 }
 
 int main(int argc, char **argv) {
-    // Run the Meeting Bot
+    // Run the Meeting Client
     SDKError err = run(argc, argv);
 
     if (Zoom::hasError(err))

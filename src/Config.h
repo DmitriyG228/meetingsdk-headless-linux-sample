@@ -36,7 +36,7 @@ class Config {
     string m_joinUrl;
     string m_meetingId;
     string m_password;
-    string m_displayName = "Zoom Meeting Bot";
+    string m_displayName = "Zoom Meeting Client";
     string m_zak;
 
     string m_clientId;

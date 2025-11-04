@@ -75,7 +75,7 @@ class Zoom : public Singleton<Zoom> {
     };
 
     /**
-     * Callback fires when the bot joins the meeting
+     * Callback fires when the app joins the meeting
     */
     function<void()> onJoin = [&]() {
         auto* reminderController = m_meetingService->GetMeetingReminderController();
