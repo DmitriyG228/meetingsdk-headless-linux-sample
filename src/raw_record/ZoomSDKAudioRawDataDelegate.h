@@ -33,7 +33,7 @@ public:
 
     void onMixedAudioRawDataReceived(AudioRawData* data) override;
     void onOneWayAudioRawDataReceived(AudioRawData* data, uint32_t node_id) override;
-    void onShareAudioRawDataReceived(AudioRawData* data) override;
+    void onShareAudioRawDataReceived(AudioRawData* data,  unsigned int user_id) override;
 
     void onOneWayInterpreterAudioRawDataReceived(AudioRawData* data_, const zchar_t* pLanguageName) override {};
 };

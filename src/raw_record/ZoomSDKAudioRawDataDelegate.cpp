@@ -37,7 +37,7 @@ void ZoomSDKAudioRawDataDelegate::onOneWayAudioRawDataReceived(AudioRawData* dat
     writeToFile(path.str(), data);
 }
 
-void ZoomSDKAudioRawDataDelegate::onShareAudioRawDataReceived(AudioRawData* data) {
+void ZoomSDKAudioRawDataDelegate::onShareAudioRawDataReceived(AudioRawData* data, unsigned int user_id) {
     stringstream ss;
     ss << "Shared Audio Raw data: " << data->GetBufferLen() / 10 << "k at " << data->GetSampleRate() << "Hz";
     Log::info(ss.str());

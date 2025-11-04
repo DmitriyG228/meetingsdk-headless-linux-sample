@@ -141,6 +141,11 @@ SDKError Zoom::join() {
         param.app_privilege_token = m_config.joinToken().c_str();
     }
 
+    if (!m_config.onBehalfToken().empty()) {
+        Log::success("used On Behalf Token");
+        param.onBehalfToken = m_config.onBehalfToken().c_str();
+    }
+
     if (m_config.useRawAudio()) {
         auto* audioSettings = m_settingService->GetAudioSettings();
         if (!audioSettings) return SDKERR_INTERNAL_ERROR;

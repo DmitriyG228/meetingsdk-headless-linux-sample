@@ -65,6 +65,14 @@ public:
     void onMeetingFullToWatchLiveStream (const zchar_t* sLiveStreamUrl) override{};
 
 
+    /**
+     * Called when the user's share network quality changes.
+     * @param type	The data type whose network quality changed.
+     * @param level	The new network quality level for the specified data type.
+     * @param userId	The user whose network quality changed.
+     * @param uplink	This data is uplink or downlink.
+     */
+    void onUserNetworkStatusChanged(MeetingComponentType type, ConnectionQuality level, unsigned int userId, bool uplink) override {};
 
     /* Setters for Callbacks */
     void setOnMeetingJoin(const function<void()>& callback);
