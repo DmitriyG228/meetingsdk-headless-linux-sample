@@ -44,6 +44,7 @@ class Config {
 
     string m_zoomHost = "https://zoom.us";
     string m_joinToken;
+    string m_onBehalfToken;
 
     bool m_isMeetingStart;
 
@@ -60,6 +61,7 @@ public:
     const string& displayName() const;
 
     const string& joinToken() const;
+    const string& onBehalfToken() const;
     const string& joinUrl() const;
 
     const string& clientId() const;

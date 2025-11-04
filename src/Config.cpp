@@ -16,6 +16,8 @@ Config::Config() :
     m_app.add_option("--host", m_zoomHost, "Host Domain for the Zoom Meeting")->capture_default_str();
     m_app.add_option("-u, --join-url", m_joinUrl, "Join or Start a Meeting URL");
     m_app.add_option("-t, --join-token", m_joinToken, "Join the meeting with App Privilege using a token");
+    m_app.add_option("-b, --on-behalf", m_onBehalfToken, "Join the meeting on behalf of a user using a token");
+
 
     m_app.add_option("--client-id", m_clientId, "Zoom Meeting Client ID")->required();
     m_app.add_option("--client-secret", m_clientSecret, "Zoom Meeting Client Secret")->required();
@@ -139,6 +141,11 @@ bool Config::isMeetingStart() const {
 
 const string& Config::joinToken() const {
     return m_joinToken;
+}
+
+const string &Config::onBehalfToken() const
+{
+    return m_onBehalfToken;
 }
 
 const string& Config::meetingId() const {
