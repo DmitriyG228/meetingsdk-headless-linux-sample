@@ -121,11 +121,12 @@ You can use the `--help` argument in [entry.sh](bin/entry.sh) to see the availab
 After a run, the bot writes to `out/`:
 
 - **out/meeting-video.mp4** – Color video (H.264).
-- **out/meeting-audio.pcm** – Raw PCM audio (no header). To get a playable file and a single file with both video and audio, run:
+- **out/meeting-audio.pcm** – Raw PCM audio (mixed, no header). To get a playable file and a single file with both video and audio, run:
   ```bash
   ./scripts/convert-recorded.sh
   ```
   This creates `out/meeting-audio.wav` and `out/meeting-with-audio.mp4` (default 32 kHz). If the audio is too fast, try `./scripts/convert-recorded.sh 16000`; if too slow, try `./scripts/convert-recorded.sh 48000`.
+- **Separate tracks per speaker:** Use `--separate-participants` (CLI) or `separate-participants=true` under `[RawAudio]` in config. The bot then writes **out/node-&lt;id&gt;.pcm** (one file per participant). Run `./scripts/convert-recorded.sh` to get **out/node-&lt;id&gt;.wav**. The `node_id` is from the SDK (not a display name); map to participants via your app if needed.
 
 ### Keeping secrets secret
 

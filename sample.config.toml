@@ -30,3 +30,5 @@ file="meeting-video.mp4"
 
 [RawAudio]
 file="meeting-audio.pcm"
+# One PCM file per speaker (out/node-<id>.pcm). Set to true for separate tracks; mixed audio is then disabled.
+# separate-participants=false
