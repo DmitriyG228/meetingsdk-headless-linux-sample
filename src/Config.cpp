@@ -9,7 +9,7 @@ Config::Config() :
 
     m_app.add_option("-m, --meeting-id", m_meetingId,"Meeting ID of the meeting");
     m_app.add_option("-p, --password", m_password,"Password of the meeting");
-    m_app.add_option("-n, --display-name", m_displayName,"Display Name for the meeting")->capture_default_str();
+    m_app.add_option("-n, --display-name", m_displayName,"Display Name for the meeting")->default_val("Zoom Bot")->capture_default_str();
 
     m_app.add_option("-z,--zak", m_zak, "ZAK Token to join the meeting");
 

@@ -29,25 +29,25 @@ void ZoomSDKRendererDelegate::onRawDataFrameReceived(YUVRawDataI420 *data)
 
     auto res = async(launch::async, [&]{
         Mat I420(data->GetStreamHeight() * 3/2, data->GetStreamWidth(), CV_8UC1, data->GetBuffer());
-        Mat small, gray;
+        Mat colorFrame, small, gray;
 
+        // Convert to BGR for color recording
+        cvtColor(I420, colorFrame, COLOR_YUV2BGR_I420);
+
+        // Optional: face detection overlay (on a copy so we don't alter recorded frame)
         cvtColor(I420, gray, COLOR_YUV2GRAY_I420);
         resize(gray, small, Size(), m_fx, m_fx, INTER_LINEAR);
         equalizeHist(small, small);
-
         m_cascade.detectMultiScale(small, m_faces, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30));
-
-        Scalar color = Scalar(0, 0, 255);
+        Scalar rectColor = Scalar(0, 0, 255);
         for (size_t i = 0; i < m_faces.size(); i++) {
             Rect r = m_faces[i];
-            rectangle(gray, Point(cvRound(r.x*m_scale), cvRound(r.y*m_scale)),
-                        Point(cvRound((r.x + r.width-1)*m_scale),
-                            cvRound((r.y + r.height-1)*m_scale)), color, 3, 8, 0);
+            rectangle(colorFrame, Point(cvRound(r.x*m_scale), cvRound(r.y*m_scale)),
+                     Point(cvRound((r.x + r.width-1)*m_scale), cvRound((r.y + r.height-1)*m_scale)),
+                     rectColor, 3, 8, 0);
         }
 
         if (m_videoWriter.isOpened()) {
-            Mat colorFrame;
-            cvtColor(gray, colorFrame, COLOR_GRAY2BGR);
             m_videoWriter.write(colorFrame);
         }
     });

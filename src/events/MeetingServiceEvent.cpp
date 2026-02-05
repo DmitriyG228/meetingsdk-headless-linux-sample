@@ -28,9 +28,17 @@ void MeetingServiceEvent::onMeetingStatusChanged(MeetingStatus status, int iResu
             Log::success("meeting ended");
             if (m_onMeetingEnd) m_onMeetingEnd();
             return;
-        case MEETING_STATUS_FAILED:
-            Log::error("failed to connect to the meeting with MeetingFailCode " + result);
+        case MEETING_STATUS_FAILED: {
+            string hint;
+            switch (iResult) {
+                case 7:  hint = " (meeting not started yet – host must join first)"; break;
+                case 8:  hint = " (meeting does not exist, ended, or invalid ID/link – start meeting and use a fresh join URL)"; break;
+                case 63: hint = " (cannot join external meeting with dev credentials – publish app or host from same Zoom account)"; break;
+                default: break;
+            }
+            Log::error("failed to connect to the meeting with MeetingFailCode " + result + hint);
             break;
+        }
         case MEETING_STATUS_WAITINGFORHOST:
             Log::info("waiting for the meeting to start");
             break;

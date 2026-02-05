@@ -1,14 +1,23 @@
 #### !! Do not store plain text credentials in production environments !!
 #### File Format: https://cliutils.github.io/CLI11/book/chapters/config.html#configure-file-format
+#### Copy this file to config.toml and fill in your credentials and meeting details.
 
-# Zoom Meeting SDK Client ID
+# Zoom Meeting SDK Client ID (from Zoom Marketplace > Meeting SDK app)
 client-id=""
 
 # Zoom Meeting SDK Client Secret
 client-secret=""
 
-# Use a join-url or a meeting-id and password
+# Join an existing meeting: use EITHER join-url OR meeting-id + password
+# Example join-url: https://zoom.us/j/12345678901?pwd=AbCdEfGhIjKlMnOp
 join-url=""
+
+# Or set meeting-id and password explicitly (leave empty if using join-url above)
+meeting-id=""
+password=""
+
+# Display name shown in the meeting (bot name)
+display-name="Zoom Bot"
 
 [RawVideo]
 file="meeting-video.mp4"

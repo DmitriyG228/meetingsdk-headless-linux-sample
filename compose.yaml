@@ -3,6 +3,11 @@ services:
     build: ./
     platform: linux/amd64
     volumes:
-     - .:/tmp/meeting-sdk-linux-sample
+      - .:/tmp/meeting-sdk-linux-sample
+      # Persist build dir so vcpkg + CMake output survive container recreation
+      - zoomsdk-build:/tmp/build
     ports:
       - "3000:3000"
+
+volumes:
+  zoomsdk-build:

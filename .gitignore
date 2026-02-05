@@ -1,11 +1,20 @@
+# Credentials (never commit)
+config.toml
+.env
+.env.*
+*.pem
+*credentials*
+
+# Output and recordings
+out/
+out/*.mp4
+out/*.wav
+out/*.pcm
+*.pcm
+*.yuv
+
 # Build folder
 build
-
-# output folder
-out
-
-# ignore the config file
-config.toml
 
 # ignore the SDK files added to the project
 lib/zoomsdk/images

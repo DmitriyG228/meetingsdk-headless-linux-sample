@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-# directory for CMake output
-BUILD=build
+# directory for CMake output (use /tmp/build in Docker to avoid host cache issues)
+if [[ -f /.dockerenv ]]; then
+  BUILD=/tmp/build
+else
+  BUILD=build
+fi
 
 # directory for application output
 mkdir -p out
@@ -33,14 +37,20 @@ setup-pulseaudio() {
 }
 
 build() {
-  # Configure CMake if this is the first run
-  [[ ! -d "$BUILD" ]] && {
-    cmake -B "$BUILD" -S . --preset debug || exit;
-    npm --prefix=client install
-  }
+  # Configure CMake if build dir missing or no cache (e.g. fresh volume)
+  if [[ ! -d "$BUILD" ]] || [[ ! -f "$BUILD/CMakeCache.txt" ]]; then
+    cmake -B "$BUILD" -S . --preset debug || exit
+    [[ -d client && -n "$(command -v npm)" ]] && npm --prefix=client install || true
+  fi
 
-  # Rename the shared library
+  # Check Zoom SDK is present (download from Zoom Marketplace and place in lib/zoomsdk)
   LIB="lib/zoomsdk/libmeetingsdk.so"
+  if [[ ! -f "$LIB" ]]; then
+    echo "Error: Zoom SDK not found at $LIB" >&2
+    echo "On your host machine, run: ./scripts/setup-zoomsdk.sh" >&2
+    echo "Or extract the Zoom Linux SDK archive into lib/zoomsdk/ (see https://developers.zoom.us/docs/meeting-sdk/linux/)" >&2
+    exit 1
+  fi
   [[ ! -f "${LIB}.1" ]] && cp "$LIB"{,.1}
 
   # Set up and start pulseaudio
@@ -52,7 +62,12 @@ build() {
 
 run() {
     export QT_LOGGING_RULES="*.debug=false;*.warning=false"
-    exec ./"$BUILD"/zoomsdk
+    exe="${BUILD}/zoomsdk"
+    if [[ -f config.toml ]]; then
+      exec "$exe" --config config.toml "$@"
+    else
+      exec "$exe" "$@"
+    fi
 }
 
 build && run;
