@@ -19,6 +19,12 @@ password=""
 # Display name shown in the meeting (bot name)
 display-name="Zoom Bot"
 
+# Optional: ZAK token (join or start as host). Get via Zoom OAuth (scope user:read:zak) + GET /users/me/token?type=zak. Pass via --zak or set here.
+# zak=""
+
+# Optional: OBF (On-Behalf-Of) token. Bot joins on behalf of a user who is in the meeting. Get via Zoom OAuth (scope user:read:token) + GET /users/me/token?type=onbehalf&meeting_id=... Pass via --on-behalf or set here.
+# on-behalf=""
+
 [RawVideo]
 file="meeting-video.mp4"
 
